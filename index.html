@@ -1,0 +1,670 @@
+<!DOCTYPE html><html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KWeXA FX - Master Gateway</title>
+    <style>
+        :root {
+            --neon-cyan: #00ffcc;
+            --neon-gold: #d4af37;
+            --neon-purple: #b366ff;
+            --neon-orange: #ff9900;
+            --neon-pink: #ff3399;
+            --bg-dark: #050508;
+        }body {
+        background: #000;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        overflow: hidden;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    .stars-bg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, #111122 0%, #000000 100%);
+        z-index: 1;
+    }
+
+    .gateway-container {
+        background: rgba(10, 10, 15, 0.96);
+        border: 2px solid var(--neon-gold);
+        border-radius: 20px;
+        padding: 30px 25px;
+        width: 90%;
+        max-width: 420px;
+        max-height: 90vh;
+        text-align: center;
+        z-index: 10;
+        box-shadow: 0 0 40px rgba(212, 175, 55, 0.25);
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .lang-toolbar {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        gap: 6px;
+        z-index: 50;
+    }
+
+    .lang-btn {
+        background: rgba(0, 255, 204, 0.05);
+        border: 1px solid var(--neon-cyan);
+        color: var(--neon-cyan);
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .lang-btn.active,
+    .lang-btn:hover {
+        background: var(--neon-cyan);
+        color: #000;
+        box-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    .logo-wrapper { margin-top: 30px; margin-bottom: 15px; }
+
+    .logo-circle {
+        width: 90px;
+        height: 90px;
+        background: #000;
+        border: 3px solid var(--neon-gold);
+        border-radius: 50%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+        animation: pulseGlow 3s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+        0% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); border-color: var(--neon-gold); }
+        100% { box-shadow: 0 0 40px rgba(0, 255, 204, 0.6); border-color: var(--neon-cyan); }
+    }
+
+    .app-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #fff;
+        margin: 5px 0;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    .app-subtitle { font-size: 12px; color: #888; margin-bottom: 15px; }
+
+    .creators-brand {
+        font-size: 12px;
+        color: #ccc;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #333;
+    }
+
+    .input-group { margin-bottom: 15px; }
+
+    input[type="password"] {
+        width: 100%;
+        padding: 14px;
+        background: #000;
+        border: 1px solid #444;
+        color: #fff;
+        border-radius: 8px;
+        font-size: 16px;
+        outline: none;
+        box-sizing: border-box;
+        text-align: center;
+        font-family: monospace;
+        letter-spacing: 2px;
+        transition: 0.3s;
+    }
+
+    input[type="password"]:focus {
+        border-color: var(--neon-cyan);
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+    }
+
+    .activate-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, var(--neon-gold) 0%, #aa8529 100%);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        transition: 0.3s;
+    }
+
+    .activate-btn:active { transform: scale(0.98); }
+    .activate-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .msg-display {
+        margin-top: 10px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #ff3333;
+        min-height: 20px;
+    }
+
+    .device-id-label { font-size: 11px; color: #555; margin-top: 10px; }
+    .device-id-val { font-size: 14px; color: var(--neon-cyan); font-family: monospace; margin-top: 5px; font-weight: bold; letter-spacing: 1px; }
+
+    .welcome-transition {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, #0a0a0f 0%, #000000 100%);
+        z-index: 1500000;
+        transition: opacity 0.5s ease;
+    }
+
+    .eagle-logo-box {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: #050508;
+        position: relative;
+        margin: 0 auto 30px auto;
+        box-shadow: 0 0 50px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(0, 255, 204, 0.1);
+        border: 2px solid var(--neon-gold);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .eagle-logo-box::before {
+        content: '';
+        position: absolute;
+        width: 88%;
+        height: 88%;
+        border-radius: 50%;
+        border: 3px dashed var(--neon-cyan);
+        animation: spinRight 10s linear infinite;
+    }
+
+    .eagle-logo-box::after {
+        content: '';
+        position: absolute;
+        width: 75%;
+        height: 75%;
+        border-radius: 50%;
+        border: 3px dotted var(--neon-purple);
+        animation: spinLeft 15s linear infinite;
+    }
+
+    .logo-main-icon { font-size: 80px; z-index: 5; text-shadow: 0 0 25px var(--neon-gold); }
+    @keyframes spinRight { 100% { transform: rotate(360deg); } }
+    @keyframes spinLeft { 100% { transform: rotate(-360deg); } }
+
+    .welcome-copyright {
+        font-size: 14px;
+        color: #ccc;
+        line-height: 1.8;
+        opacity: 0;
+        animation: fadeInText 1s ease forwards 0.5s;
+        text-align: center;
+        max-width: 85%;
+    }
+
+    @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes fadeInText { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    .hub-menu { display: none; flex-direction: column; width: 100%; }
+    .hub-title {
+        font-size: 22px;
+        color: var(--neon-gold);
+        margin-bottom: 20px;
+        margin-top: 10px;
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        text-align: center;
+    }
+    .hub-grid { display: flex; flex-direction: column; gap: 12px; }
+
+    .hub-card {
+        background: rgba(5, 5, 5, 0.85);
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+        text-decoration: none;
+        text-align: right;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hub-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; }
+    .hub-card.w-plan { border-color: rgba(212, 175, 55, 0.4); color: #fff; }
+    .hub-card.w-plan::before { background: var(--neon-gold); }
+    .hub-card.w-plan:hover { border-color: var(--neon-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+    .hub-card.w-hex { border-color: rgba(0, 255, 204, 0.4); color: #fff; }
+    .hub-card.w-hex::before { background: var(--neon-cyan); }
+    .hub-card.w-hex:hover { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); }
+    .hub-card.w-sq9 { border-color: rgba(255, 153, 0, 0.4); color: #fff; }
+    .hub-card.w-sq9::before { background: var(--neon-orange); }
+    .hub-card.w-sq9:hover { border-color: var(--neon-orange); box-shadow: 0 0 15px rgba(255, 153, 0, 0.2); }
+    .hub-card.w-mat { border-color: rgba(255, 51, 153, 0.4); color: #fff; }
+    .hub-card.w-mat::before { background: var(--neon-pink); }
+    .hub-card.w-mat:hover { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255, 51, 153, 0.2); }
+    .hub-card.w-astro { border-color: rgba(179, 102, 255, 0.4); color: #fff; }
+    .hub-card.w-astro::before { background: var(--neon-purple); }
+    .hub-card.w-astro:hover { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(179, 102, 255, 0.2); }
+    .hub-card:active { transform: scale(0.97); }
+    .hub-icon { font-size: 30px; min-width: 40px; text-align: center; }
+    .hub-info { display: flex; flex-direction: column; flex: 1; }
+    .hub-name { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+    .hub-desc { font-size: 11px; color: #aaa; line-height: 1.4; }
+
+    .blocked-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 2000000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .blocked-card {
+        max-width: 360px;
+        border: 1px solid var(--neon-pink);
+        border-radius: 14px;
+        padding: 24px;
+        background: rgba(15, 5, 12, 0.96);
+        box-shadow: 0 0 35px rgba(255, 51, 153, 0.35);
+    }
+
+    .blocked-card h2 { color: var(--neon-pink); margin: 0 0 10px 0; }
+    .blocked-card p { color: #ddd; line-height: 1.7; }
+</style>
+</head>
+<body>
+    <div class="stars-bg"></div><div class="gateway-container" id="gateway-main">
+    <div class="lang-toolbar" id="lang-menu">
+        <button class="lang-btn active" id="btn-lang-ku" onclick="setLanguage('ku')">کوردی</button>
+        <button class="lang-btn" id="btn-lang-ar" onclick="setLanguage('ar')">عربي</button>
+        <button class="lang-btn" id="btn-lang-en" onclick="setLanguage('en')">EN</button>
+    </div>
+
+    <div id="lock-section">
+        <div class="logo-wrapper"><div class="logo-circle">🦅</div></div>
+        <div class="app-title" id="txt-title">Master Suite Pro</div>
+        <div class="app-subtitle" id="txt-subtitle">سیستەمی پێشکەوتووی بازاڕەکانی دارایی</div>
+        <div class="creators-brand" id="txt-dev-credit-lock"></div>
+        <div class="input-group"><input type="password" id="license-input" placeholder="••••••••" autocomplete="off"></div>
+        <button class="activate-btn" id="btn-activate" onclick="validateLicense()">چالاککردن</button>
+        <div class="msg-display" id="lock-msg"></div>
+        <div class="device-id-label" id="txt-device-id">ئایدی تایبەتی مۆبایلەکەت:</div>
+        <div class="device-id-val" id="device-id-display">...</div>
+    </div>
+
+    <div id="hub-section" class="hub-menu">
+        <div class="hub-title" id="txt-hub-title">هەڵبژاردنی نەخشەی شیکاری</div>
+        <div class="hub-grid">
+            <a href="planetary.html" class="hub-card w-plan"><span class="hub-icon">🎡</span><div class="hub-info"><span class="hub-name" id="h-n1">نەخشەی گەن (Wheel)</span><span class="hub-desc" id="h-d1">خشتەی بازنەیی کات و نرخ، ئەندازەی گەن</span></div></a>
+            <a href="hexagon.html" class="hub-card w-hex"><span class="hub-icon">⬡</span><div class="hub-info"><span class="hub-name" id="h-n2">نەخشەی شەش‌گۆشە</span><span class="hub-desc" id="h-d2">هێکساگرامی کات و نرخ بۆ وەرچەرخانەکان</span></div></a>
+            <a href="sq9.html" class="hub-card w-sq9"><span class="hub-icon">🔲</span><div class="hub-info"><span class="hub-name" id="h-n3">چوارگۆشەی ٩ (Sq of 9)</span><span class="hub-desc" id="h-d3">خشتەی کلاسیکی گەن بۆ دۆزینەوەی ئامانج</span></div></a>
+            <a href="matrix24.html" class="hub-card w-mat"><span class="hub-icon">🧿</span><div class="hub-info"><span class="hub-name" id="h-n4">تەلەسمی گەن & بۆت</span><span class="hub-desc" id="h-d4">ماتریکسی ٢٤ کاتژمێری و بۆتی پێدانی سیگناڵ</span></div></a>
+            <a href="astro.html" class="hub-card w-astro"><span class="hub-icon">🪐</span><div class="hub-info"><span class="hub-name" id="h-n5">شیکاری فەلەکی (Astro)</span><span class="hub-desc" id="h-d5">نەخشەی ئەستێرەکان، گەڕانەوەی هەسارەکان</span></div></a>
+        </div>
+    </div>
+</div>
+
+<div id="welcome-transition" class="welcome-transition">
+    <div class="eagle-logo-box"><div class="logo-main-icon">🦅</div></div>
+    <div class="welcome-copyright" id="welcome-copyright"></div>
+</div>
+
+<script>
+    const DB_BASE = "https://kwexaict-default-rtdb.firebaseio.com";
+    const CHECK_INTERVAL_MS = 2000;
+    const STORAGE_LICENSE = "rfx_license_saved";
+    const STORAGE_DEVICE = "rfx_device_id";
+
+    let activeLicenseKey = null;
+    let liveCheckTimer = null;
+    let isBlocked = false;
+    let lang = 'ku';
+
+    const lexicon = {
+        ku: {
+            title: "Master Suite Pro",
+            subtitle: "سیستەمی پێشکەوتووی بازاڕەکانی دارایی",
+            activate: "چالاککردن",
+            device_id: "ئایدی تایبەتی مۆبایلەکەت:",
+            placeholder: "کلیلی چوونەژوورەوە...",
+            hub_title: "هەڵبژاردنی نەخشەی شیکاری",
+            h_n1: "نەخشەی گەن (Wheel)", h_d1: "خشتەی بازنەیی کات و نرخ، ئەندازەی گەن",
+            h_n2: "نەخشەی شەش‌گۆشە (Hexagon)", h_d2: "هێکساگرامی کات و نرخ بۆ وەرچەرخانەکان",
+            h_n3: "چوارگۆشەی ٩ (Square of 9)", h_d3: "خشتەی کلاسیکی گەن بۆ دۆزینەوەی ئامانج",
+            h_n4: "تەلەسمی گەن & بۆت", h_d4: "ماتریکسی ٢٤ کاتژمێری و بۆتی پێدانی سیگناڵ",
+            h_n5: "شیکاری فەلەکی (Astro Map)", h_d5: "نەخشەی ئەستێرەکان، گەڕانەوەی هەسارەکان",
+            err_wrong: "❌ کلیلەکە هەڵەیە، ڕاگیراوە، یان بەسەرچووە!",
+            err_net: "⚠️ هێڵی ئینتەرنێت پێویستە بۆ پشکنینی کلیل!",
+            succ_msg: "✅ سەرکەوتوو بوو، تکایە چاوەڕێ بە...",
+            auto_login: "چوونەژوورەوەی خۆکار...",
+            stopped: "ئەم کلیلە لەلایەن بەڕێوەبەرەوە ڕاگیراوە",
+            expired: "ماوەی ئەم کلیلە تەواو بووە",
+            blocked_title: "🚫 Access Stopped",
+            copyright: "مافی ئەم بەرهەمە پارێزراوە تایبەتە بە:<br>دروستکەر و پەرەپێدەری یاسا و نەخشەی گەن بەشێوازێکی سەردەمیانە<br><strong style='color: var(--neon-gold); font-size: 16px; display: block; margin-top: 8px; direction: ltr; letter-spacing: 1px;'>KWeXA FX</strong>"
+        },
+        ar: {
+            title: "Master Suite Pro",
+            subtitle: "النظام المتقدم للتحليل المالي",
+            activate: "تفعيل الدخول",
+            device_id: "معرّف الجهاز الخاص بك:",
+            placeholder: "مفتاح الدخول...",
+            hub_title: "إختر خريطة التحليل",
+            h_n1: "عجلة جان (Gann Wheel)", h_d1: "خريطة دائرية للوقت والسعر والهندسة",
+            h_n2: "السداسي (Hexagon)", h_d2: "هيكساجرام الوقت والسعر للانعكاسات",
+            h_n3: "مربع 9 (Square of 9)", h_d3: "مصفوفة جان الكلاسيكية للأهداف",
+            h_n4: "مصفوفة 24 & البوت", h_d4: "المصفوفة اليومية وبوت الإشارات الرقمية",
+            h_n5: "التحليل الفلكي (Astro)", h_d5: "خريطة الكواكب، التراجع الكوكبي",
+            err_wrong: "❌ المفتاح غير صحيح أو موقوف أو منتهي الصلاحية!",
+            err_net: "⚠️ الاتصال بالإنترنت مطلوب للتحقق من المفتاح!",
+            succ_msg: "✅ تم التفعيل بنجاح، يرجى الانتظار...",
+            auto_login: "تسجيل الدخول التلقائي...",
+            stopped: "تم إيقاف هذا المفتاح من قبل المدير",
+            expired: "انتهت صلاحية هذا المفتاح",
+            blocked_title: "🚫 Access Stopped",
+            copyright: "جميع حقوق هذا المنتج محفوظة وخاصة بـ:<br>صانع ومطور قوانين وخريطة جان بطريقة عصرية<br><strong style='color: var(--neon-gold); font-size: 16px; display: block; margin-top: 8px; direction: ltr; letter-spacing: 1px;'>KWeXA FX</strong>"
+        },
+        en: {
+            title: "Master Suite Pro",
+            subtitle: "Advanced Financial Trading System",
+            activate: "Activate Suite",
+            device_id: "Your Unique Device ID:",
+            placeholder: "Enter License Key...",
+            hub_title: "Select Analysis Chart",
+            h_n1: "Gann Wheel (Planetary)", h_d1: "Circular Time/Price Chart & Geometry",
+            h_n2: "Gann Hexagon Chart", h_d2: "Time/Price Hexagram for Reversals",
+            h_n3: "Square of 9", h_d3: "Classic Gann Matrix for Targets",
+            h_n4: "Matrix 24 & Bot", h_d4: "Daily 24H Matrix & Signal Bot",
+            h_n5: "Astro Map Pro", h_d5: "Planetary Alignments & Retrogrades",
+            err_wrong: "❌ Invalid, stopped, or expired license key!",
+            err_net: "⚠️ Network connection required for validation!",
+            succ_msg: "✅ Success, please wait...",
+            auto_login: "Auto-login in progress...",
+            stopped: "This license has been stopped by the admin",
+            expired: "This license has expired",
+            blocked_title: "🚫 Access Stopped",
+            copyright: "All rights for this product are reserved & belong to:<br>Creator & Developer of Gann Rules and Map in a Modern Way<br><strong style='color: var(--neon-gold); font-size: 16px; display: block; margin-top: 8px; direction: ltr; letter-spacing: 1px;'>KWeXA FX</strong>"
+        }
+    };
+
+    function setLanguage(selectedLang) {
+        lang = selectedLang;
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        const langBtn = document.getElementById('btn-lang-' + lang);
+        if (langBtn) langBtn.classList.add('active');
+
+        document.documentElement.dir = (lang === 'en') ? 'ltr' : 'rtl';
+        const dict = lexicon[lang];
+
+        document.getElementById('txt-title').innerText = dict.title;
+        document.getElementById('txt-subtitle').innerText = dict.subtitle;
+        document.getElementById('btn-activate').innerText = dict.activate;
+        document.getElementById('txt-device-id').innerText = dict.device_id;
+        document.getElementById('license-input').placeholder = dict.placeholder;
+        document.getElementById('txt-hub-title').innerText = dict.hub_title;
+        document.getElementById('h-n1').innerText = dict.h_n1; document.getElementById('h-d1').innerText = dict.h_d1;
+        document.getElementById('h-n2').innerText = dict.h_n2; document.getElementById('h-d2').innerText = dict.h_d2;
+        document.getElementById('h-n3').innerText = dict.h_n3; document.getElementById('h-d3').innerText = dict.h_d3;
+        document.getElementById('h-n4').innerText = dict.h_n4; document.getElementById('h-d4').innerText = dict.h_d4;
+        document.getElementById('h-n5').innerText = dict.h_n5; document.getElementById('h-d5').innerText = dict.h_d5;
+        document.getElementById('txt-dev-credit-lock').innerHTML = dict.copyright;
+        document.getElementById('welcome-copyright').innerHTML = dict.copyright;
+
+        try { localStorage.setItem('rfx_lang', lang); } catch(e) {}
+    }
+
+    function getDeviceId() {
+        let id = localStorage.getItem(STORAGE_DEVICE);
+        if (!id) {
+            id = 'RFX-' + Math.random().toString(36).slice(2, 10).toUpperCase();
+            localStorage.setItem(STORAGE_DEVICE, id);
+        }
+        return id;
+    }
+
+    const deviceID = getDeviceId();
+    document.getElementById('device-id-display').innerText = deviceID;
+
+    function licenseUrl(key) {
+        return `${DB_BASE}/licenses/${encodeURIComponent(String(key).toUpperCase())}.json?ts=${Date.now()}`;
+    }
+
+    async function fetchLicense(key) {
+        const response = await fetch(licenseUrl(key), {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        });
+        if (!response.ok) throw new Error('Network error');
+        return await response.json();
+    }
+
+    function isLicenseValid(data) {
+        if (!data) return { ok: false, reason: lexicon[lang].err_wrong };
+
+        if (data.active === false || data.status === 'stopped' || data.status === 'blocked') {
+            return { ok: false, reason: lexicon[lang].stopped };
+        }
+
+        if (!(data.deviceId === deviceID || data.deviceId === 'ALL')) {
+            return { ok: false, reason: lexicon[lang].err_wrong };
+        }
+
+        if (data.expiry && new Date() > new Date(data.expiry)) {
+            return { ok: false, reason: lexicon[lang].expired };
+        }
+
+        return { ok: true, reason: '' };
+    }
+
+    function stopLiveLicenseCheck() {
+        if (liveCheckTimer) clearInterval(liveCheckTimer);
+        liveCheckTimer = null;
+    }
+
+    function startLiveLicenseCheck(key) {
+        activeLicenseKey = String(key).toUpperCase();
+        stopLiveLicenseCheck();
+
+        liveCheckTimer = setInterval(async () => {
+            if (!activeLicenseKey || isBlocked) return;
+
+            try {
+                const data = await fetchLicense(activeLicenseKey);
+                const result = isLicenseValid(data);
+
+                if (!result.ok) {
+                    blockAccess(result.reason);
+                }
+            } catch(e) {
+                // ئەگەر دەتەوێت بەبێ ئینتەرنێتیش دەربچێت، ئەم دێڕە چالاک بکە:
+                // blockAccess(lexicon[lang].err_net);
+            }
+        }, CHECK_INTERVAL_MS);
+    }
+
+    function blockAccess(message) {
+        if (isBlocked) return;
+        isBlocked = true;
+        stopLiveLicenseCheck();
+
+        try { localStorage.removeItem(STORAGE_LICENSE); } catch(e) {}
+
+        document.body.innerHTML = `
+            <div class="blocked-screen">
+                <div class="blocked-card">
+                    <h2>${lexicon[lang].blocked_title}</h2>
+                    <p>${message || lexicon[lang].stopped}</p>
+                    <p style="font-size:12px;color:#888;">Device ID: ${deviceID}</p>
+                </div>
+            </div>
+        `;
+
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1800);
+    }
+
+    async function validateLicense() {
+        const input = document.getElementById('license-input');
+        const btn = document.getElementById('btn-activate');
+        const msg = document.getElementById('lock-msg');
+        const key = input.value.trim().toUpperCase();
+
+        if (!key) return;
+
+        btn.disabled = true;
+
+        try {
+            const data = await fetchLicense(key);
+            const result = isLicenseValid(data);
+
+            if (result.ok) {
+                localStorage.setItem(STORAGE_LICENSE, key);
+                msg.style.color = '#00ffcc';
+                msg.innerText = lexicon[lang].succ_msg;
+                startLiveLicenseCheck(key);
+                setTimeout(() => triggerWelcomeSequence(), 1200);
+            } else {
+                msg.style.color = '#ff3333';
+                msg.innerText = result.reason;
+                try { localStorage.removeItem(STORAGE_LICENSE); } catch(e) {}
+            }
+        } catch(e) {
+            msg.style.color = '#ff3333';
+            msg.innerText = lexicon[lang].err_net;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function triggerWelcomeSequence() {
+        document.getElementById('gateway-main').style.display = 'none';
+        const transitionScreen = document.getElementById('welcome-transition');
+        transitionScreen.style.opacity = '1';
+        transitionScreen.style.display = 'flex';
+
+        setTimeout(() => {
+            transitionScreen.style.opacity = '0';
+            setTimeout(() => {
+                transitionScreen.style.display = 'none';
+                document.getElementById('gateway-main').style.display = 'block';
+                document.getElementById('lock-section').style.display = 'none';
+                document.getElementById('lang-menu').style.display = 'none';
+                document.getElementById('hub-section').style.display = 'flex';
+            }, 500);
+        }, 2500);
+    }
+
+    async function verifySavedKey(k, showHubDirectly = false) {
+        try {
+            const data = await fetchLicense(k);
+            const result = isLicenseValid(data);
+
+            if (result.ok) {
+                startLiveLicenseCheck(k);
+
+                if (showHubDirectly) {
+                    document.getElementById('lock-section').style.display = 'none';
+                    document.getElementById('lang-menu').style.display = 'none';
+                    document.getElementById('hub-section').style.display = 'flex';
+                } else {
+                    triggerWelcomeSequence();
+                }
+            } else {
+                try { localStorage.removeItem(STORAGE_LICENSE); } catch(e) {}
+                const msg = document.getElementById('lock-msg');
+                msg.style.color = '#ff3333';
+                msg.innerText = result.reason;
+            }
+        } catch(e) {
+            const msg = document.getElementById('lock-msg');
+            if (msg) {
+                msg.style.color = '#ff3333';
+                msg.innerText = lexicon[lang].err_net;
+            }
+        }
+    }
+
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    document.addEventListener('keydown', function(e) {
+        const key = String(e.key || '').toLowerCase();
+
+        if (
+            key === 'f12' ||
+            (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(key)) ||
+            (e.ctrlKey && ['u', 's'].includes(key))
+        ) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    }, true);
+
+    window.onload = () => {
+        const savedLang = localStorage.getItem('rfx_lang') || 'ku';
+        setLanguage(savedLang);
+
+        const savedKey = localStorage.getItem(STORAGE_LICENSE);
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.get('showHub') === 'true' && savedKey) {
+            verifySavedKey(savedKey, true);
+            return;
+        }
+
+        if (savedKey) {
+            const msg = document.getElementById('lock-msg');
+            msg.style.color = '#00ffcc';
+            msg.innerText = lexicon[lang].auto_login || 'چوونەژوورەوەی خۆکار...';
+            setTimeout(() => verifySavedKey(savedKey, false), 1000);
+        }
+    };
+</script>
+
+</body>
+</html>

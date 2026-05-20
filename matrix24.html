@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KWeXA FX - Matrix 24 & Bot Secure</title>
+
+<script>
+window.RFX_PAGE_KEY = "matrix24";
+</script>
+
+<style>
+:root{--neon-cyan:#00ffcc;--neon-gold:#d4af37;--neon-pink:#ff3399;--neon-purple:#b366ff;--bg-dark:#000}
+body{background:#000;margin:0;overflow:hidden;font-family:sans-serif;touch-action:none;color:white;direction:ltr;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.header{position:fixed;top:0;width:100%;background:rgba(12,12,12,.95);padding:12px 15px;border-bottom:1px solid var(--neon-cyan);z-index:9999;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;backdrop-filter:blur(5px);direction:ltr}
+.menu-toggle{background:var(--neon-cyan);border:none;color:#000;padding:6px 15px;border-radius:4px;font-weight:bold;cursor:pointer;font-size:14px;box-shadow:0 0 10px rgba(0,255,204,.3);order:1}
+.center-brand-text{color:var(--neon-gold);font-weight:bold;font-size:9px;font-family:monospace;order:2;flex:1;text-align:center;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 5px}
+.back-arrow-btn{background:transparent;border:none;color:var(--neon-cyan);font-size:24px;cursor:pointer;transition:.3s;padding:0 5px;display:flex;align-items:center;order:3;text-decoration:none}
+.back-arrow-btn:active{transform:scale(.9);color:#fff}
+.sidebar{position:fixed;top:0;width:310px;height:100%;background:#0a0a0f;z-index:9999999;transition:.3s;padding:85px 20px 20px 20px;box-sizing:border-box;overflow-y:auto;box-shadow:0 0 20px rgba(0,0,0,.9)}
+html[dir="rtl"] .sidebar{right:-320px;border-left:1px solid var(--neon-cyan);direction:rtl}
+html[dir="rtl"] .sidebar.active{right:0}
+html[dir="rtl"] .close-menu{left:15px;right:auto}
+html[dir="ltr"] .sidebar{left:-320px;border-right:1px solid var(--neon-cyan);direction:ltr}
+html[dir="ltr"] .sidebar.active{left:0}
+html[dir="ltr"] .close-menu{right:15px;left:auto}
+.close-menu{position:absolute;top:15px;background:none;border:1px solid var(--neon-cyan);color:var(--neon-cyan);padding:2px 8px;cursor:pointer;border-radius:4px;font-weight:bold}
+.menu-item{margin-top:15px;border-bottom:1px solid #222;padding-bottom:15px}
+.menu-item label{display:block;color:var(--neon-cyan);font-size:12px;margin-bottom:6px;font-weight:bold;text-align:center}
+input,select{background:#0a0a0a;border:1px solid #444;color:#fff;padding:8px;border-radius:5px;font-size:14px;outline:none;width:100%;box-sizing:border-box;text-align:center;font-weight:bold;font-family:monospace}
+input:focus,select:focus{border-color:var(--neon-cyan)}
+.helper-text{font-size:10px;color:#888;margin-top:5px;text-align:center}
+#viewport-maps{position:absolute;top:0;left:0;width:100vw;height:100vh;overflow:hidden;display:block;z-index:10;background:radial-gradient(circle at center,#111 0%,#000 80%)}
+.map-area{position:absolute;width:5600px;height:5600px;display:flex;align-items:center;justify-content:center;cursor:grab;left:50%;top:50%;transform:translate(-50%,-50%)}
+.map-area:active{cursor:grabbing}
+#zoom-layer{position:relative;transform-origin:center;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+canvas{background:transparent;display:block}
+#container-talisman{position:relative;display:flex;align-items:center;justify-content:center}
+#rebar-bot-btn{position:fixed;bottom:30px;right:20px;z-index:100001;background:linear-gradient(135deg,var(--neon-gold),#ff9900);color:#000;padding:12px 20px;border-radius:30px;font-weight:bold;font-size:15px;cursor:grab;box-shadow:0 5px 20px rgba(212,175,55,.5);border:2px solid #fff;display:flex;align-items:center;gap:8px;user-select:none;touch-action:none}
+#rebar-bot-btn:active{cursor:grabbing}
+#bot-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,15,.98);border:2px solid var(--neon-gold);padding:25px;border-radius:15px;z-index:100002;width:85%;max-width:360px;box-shadow:0 10px 40px rgba(212,175,55,.4);text-align:center}
+html[dir="rtl"] #bot-modal{direction:rtl}
+html[dir="ltr"] #bot-modal{direction:ltr}
+#bot-modal h3{color:var(--neon-gold);margin-top:0;border-bottom:1px dashed #444;padding-bottom:10px}
+.bot-msg{font-size:14px;color:#fff;margin-bottom:15px;line-height:1.5;font-weight:bold}
+.bot-input{font-size:20px;padding:12px;border:2px solid var(--neon-cyan);border-radius:8px;margin-bottom:15px;color:#fff;background:#000;width:90%;text-align:center;font-family:monospace}
+.bot-btn-submit{background:var(--neon-cyan);color:#000;padding:12px 20px;border:none;border-radius:8px;font-weight:bold;font-size:16px;cursor:pointer;width:100%;box-shadow:0 4px 10px rgba(0,255,204,.3)}
+.bot-btn-submit:active{transform:scale(.98)}
+html[dir="rtl"] .close-bot{position:absolute;top:15px;left:15px;background:none;border:none;color:#fff;font-size:18px;cursor:pointer}
+html[dir="ltr"] .close-bot{position:absolute;top:15px;right:15px;background:none;border:none;color:#fff;font-size:18px;cursor:pointer}
+#bot-results{display:none;margin-top:15px;background:#050508;padding:15px;border-radius:8px;border:1px solid #334;max-height:350px;overflow-y:auto}
+html[dir="rtl"] #bot-results{text-align:right}
+html[dir="ltr"] #bot-results{text-align:left}
+.signal-box{margin-top:10px;padding:12px;border-radius:6px;font-size:13px;line-height:1.8}
+html[dir="rtl"] .buy-signal{background:rgba(0,255,204,.08);border-right:4px solid var(--neon-cyan);color:var(--neon-cyan);border-left:none}
+html[dir="ltr"] .buy-signal{background:rgba(0,255,204,.08);border-left:4px solid var(--neon-cyan);color:var(--neon-cyan);border-right:none}
+html[dir="rtl"] .sell-signal{background:rgba(255,51,153,.08);border-right:4px solid var(--neon-pink);color:var(--neon-pink);margin-top:10px;border-left:none}
+html[dir="ltr"] .sell-signal{background:rgba(255,51,153,.08);border-left:4px solid var(--neon-pink);color:var(--neon-pink);margin-top:10px;border-right:none}
+.target-val{color:#fff;font-family:monospace;font-size:15px;font-weight:bold}
+.blocked-screen{position:fixed;inset:0;z-index:999999999;display:flex;align-items:center;justify-content:center;background:#000;padding:20px;text-align:center}
+.blocked-card{max-width:360px;border:1px solid var(--neon-pink);border-radius:14px;padding:24px;background:rgba(15,5,12,.96);box-shadow:0 0 35px rgba(255,51,153,.35)}
+.blocked-card h2{color:var(--neon-pink);margin:0 0 10px 0}
+.blocked-card p{color:#ddd;line-height:1.7}
+</style>
+</head>
+
+<body oncontextmenu="return false;">
+
+<div class="header">
+    <button class="menu-toggle" id="btn-menu" data-i18n="btn_menu">☰ ڕێکخستن</button>
+    <div class="center-brand-text">KWeXA FX</div>
+    <a href="index.html?showHub=true" class="back-arrow-btn">⬅️</a>
+</div>
+
+<div id="rebar-bot-btn" data-i18n="btn_bot">🤖 بۆتی گەن</div>
+
+<div id="bot-modal">
+    <button class="close-bot" onclick="window.closeBot()">✕</button>
+    <h3 data-i18n="bot_title">🤖 بۆتی شیكاریی گه‌ن</h3>
+    <div class="bot-msg" id="bot-greeting">...</div>
+    <input type="number" id="botPriceInput" class="bot-input" data-i18n-ph="bot_ph" placeholder="نرخ... (نموونە 4700)">
+    <button class="bot-btn-submit" onclick="window.generateMatrixSignal()" data-i18n="bot_submit">ئامادەکردنی ئۆردەر 🎯</button>
+
+    <div id="bot-results">
+        <div style="color:#fff;text-align:center;margin-bottom:10px;font-weight:bold;border-bottom:1px dashed #555;padding-bottom:10px;" id="bot-status"></div>
+        <div class="signal-box buy-signal" id="buyBox"></div>
+        <div class="signal-box sell-signal" id="sellBox"></div>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <button class="close-menu" id="btn-close-menu">✕</button>
+
+    <h3 style="color: var(--neon-pink); text-align: center; border-bottom: 1px dashed #444; padding-bottom: 10px; margin-top: 0;" data-i18n="opt_tal">🧿 تەلەسمی گەن</h3>
+
+    <div id="controls-talisman">
+        <div class="menu-item">
+            <label style="color:#00ffcc;" data-i18n="lbl_tal_center">سەنتەر (Center Price)</label>
+            <input type="number" id="sq24BasePrice" value="4795">
+        </div>
+
+        <div class="menu-item">
+            <label style="color:#00ffcc;" data-i18n="lbl_tal_dir">ئاراستەی نەخشە (پێشاندان)</label>
+            <select id="sq24TrendDir">
+                <option value="up" data-i18n="opt_up">📈 بەرزبوونەوە (+)</option>
+                <option value="down" selected data-i18n="opt_down">📉 دابەزین (-)</option>
+            </select>
+        </div>
+
+        <div class="menu-item" style="border-left:3px solid #ff3399;background:rgba(255,51,153,.05);">
+            <label style="color:var(--neon-pink);" data-i18n="lbl_tal_time">کاتی دەستکرد (بۆ پشکنین)</label>
+            <input type="time" id="sq24ManualTime">
+            <div class="helper-text" data-i18n="help_live">بەتاڵی بهێڵە بۆ کاتی لایڤ</div>
+        </div>
+
+        <div class="menu-item" style="border-bottom:none;">
+            <label style="color:#00ffcc;" data-i18n="lbl_tal_step">بڕی هەنگاو (Step)</label>
+            <input type="number" id="sq24StepValue" value="1" step="0.5">
+        </div>
+    </div>
+</div>
+
+<div id="viewport-maps">
+    <div class="map-area" id="map">
+        <div id="zoom-layer">
+            <div id="container-talisman">
+                <canvas id="sq24Canvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+const DB_BASE = "https://kwexaict-default-rtdb.firebaseio.com";
+const STORAGE_LICENSE = "rfx_license_saved";
+const STORAGE_DEVICE = "rfx_device_id";
+const CHECK_INTERVAL_MS = 2000;
+const PAGE_KEY = "matrix24";
+
+let liveCheckTimer = null;
+let activeLicenseKey = null;
+let isBlocked = false;
+
+function getDeviceId(){
+    let id = localStorage.getItem(STORAGE_DEVICE);
+    if(!id){
+        id = "RFX-" + Math.random().toString(36).slice(2,10).toUpperCase();
+        localStorage.setItem(STORAGE_DEVICE,id);
+    }
+    return id;
+}
+
+const DEVICE_ID = getDeviceId();
+
+function licenseUrl(key){
+    return `${DB_BASE}/licenses/${encodeURIComponent(String(key).toUpperCase())}.json?ts=${Date.now()}`;
+}
+
+async function fetchLicense(key){
+    const res = await fetch(licenseUrl(key), {
+        cache: "no-store",
+        headers: {"Cache-Control":"no-cache","Pragma":"no-cache"}
+    });
+    if(!res.ok) throw new Error("NET");
+    return await res.json();
+}
+
+function pageAllowed(data){
+    if(!data.allowedPages) return true;
+    return data.allowedPages[PAGE_KEY] === true;
+}
+
+function isLicenseValid(data){
+    if(!data) return {ok:false, reason:"کلیلەکە هەڵەیە یان نەدۆزرایەوە"};
+    if(data.active === false || data.status === "stopped" || data.status === "blocked") return {ok:false, reason:"ئەم کلیلە ڕاگیراوە"};
+    if(!(data.deviceId === DEVICE_ID || data.deviceId === "ALL")) return {ok:false, reason:"ئەم کلیلە بۆ ئەم مۆبایلە نییە"};
+    if(data.expiry && new Date() > new Date(data.expiry)) return {ok:false, reason:"ماوەی ئەم کلیلە تەواو بووە"};
+    if(!pageAllowed(data)) return {ok:false, reason:"ڕێگەپێدانی ئەم نەخشەیەت نییە"};
+    return {ok:true, reason:""};
+}
+
+function blockAccess(msg){
+    if(isBlocked) return;
+    isBlocked = true;
+    if(liveCheckTimer) clearInterval(liveCheckTimer);
+    try{localStorage.removeItem(STORAGE_LICENSE)}catch(e){}
+
+    document.body.innerHTML = `
+        <div class="blocked-screen">
+            <div class="blocked-card">
+                <h2>🚫 Access Stopped</h2>
+                <p>${msg || "Access stopped"}</p>
+                <p style="font-size:12px;color:#888;">Device ID: ${DEVICE_ID}</p>
+            </div>
+        </div>
+    `;
+
+    setTimeout(() => {
+        window.location.href = "index.html";
+    }, 1500);
+}
+
+async function verifyNow(){
+    const key = localStorage.getItem(STORAGE_LICENSE);
+    if(!key){
+        window.location.href = "index.html";
+        return false;
+    }
+
+    try{
+        const data = await fetchLicense(key);
+        const result = isLicenseValid(data);
+        if(!result.ok){
+            blockAccess(result.reason);
+            return false;
+        }
+        activeLicenseKey = key;
+        return true;
+    }catch(e){
+        return true;
+    }
+}
+
+function startLiveCheck(){
+    if(liveCheckTimer) clearInterval(liveCheckTimer);
+
+    liveCheckTimer = setInterval(async () => {
+        if(!activeLicenseKey || isBlocked) return;
+
+        try{
+            const data = await fetchLicense(activeLicenseKey);
+            const result = isLicenseValid(data);
+            if(!result.ok) blockAccess(result.reason);
+        }catch(e){}
+    }, CHECK_INTERVAL_MS);
+}
+
+window.RFX_SECURITY_READY = verifyNow().then(ok => {
+    if(ok) startLiveCheck();
+    return ok;
+});
+})();
+</script>
+
+<script>
+(() => {
+"use strict";
+
+const lexicon = {
+    ku: {
+        btn_menu:"☰ ڕێکخستن", opt_tal:"🧿 تەلەسمی گەن (Matrix 24)",
+        lbl_tal_center:"سەنتەر (Center Price)", lbl_tal_dir:"ئاراستەی نەخشە (پێشاندان)",
+        lbl_tal_time:"کاتی دەستکرد (بۆ پشکنین)", lbl_tal_step:"بڕی هەنگاو (Step)",
+        help_live:"بەتاڵی بهێڵە بۆ کاتی لایڤ",
+        opt_up:"📈 بەرزبوونەوە (+)", opt_down:"📉 دابەزین (-)",
+        btn_bot:"🤖 بۆتی گەن", bot_title:"🤖 بۆتی شیكاریی گه‌ن", bot_ph:"نرخ... (نموونە 4700)", bot_submit:"ئامادەکردنی ئۆردەر 🎯",
+        bot_err:"تکایە نرخێکی دروست بنووسە!",
+        bot_greet:h=>`سڵاو! ئۆردەر بۆ کاتژمێر ${h}:00 ئامادە دەکەم، نرخی ئێستام پێ بڵێ:`,
+        bot_res_title:h=>`📊 <b>شیکاری بۆ کاتژمێر ${h}:00</b><br>لە نەخشەکەدا نرخەکەت دەکەوێتە نێوان:<br>`,
+        bot_buy_title:`<b>🟢 پلانی کڕین لەناو کەناڵ (BUY):</b><br>`,
+        bot_sell_title:`<b>🔴 پلانی فرۆشتن لەناو کەناڵ (SELL):</b><br>`,
+        bot_buy_entry:v=>`چوونەژوورەوە: ئەگەر بەر <b>${v}</b> کەوت و گەڕایەوە<br>`,
+        bot_sell_entry:v=>`چوونەژوورەوە: ئەگەر بەر <b>${v}</b> کەوت و دابەزی<br>`,
+        bot_q1:"🎯 TP1 (چارەک): ", bot_q2:"🎯 TP2 (نیوە): ", bot_q3:"🎯 TP3 (سێ چارەک): ", bot_q4:"🎯 TP4 (سەقف): ", bot_q4s:"🎯 TP4 (بنکە): ", bot_sl:"🛑 ستۆپ لۆس: "
+    },
+    ar: {
+        btn_menu:"☰ إعدادات", opt_tal:"🧿 مصفوفة 24 & البوت",
+        lbl_tal_center:"المركز (Center Price)", lbl_tal_dir:"اتجاه الخريطة (العرض)",
+        lbl_tal_time:"وقت يدوي (للاختبار)", lbl_tal_step:"قيمة الخطوة (Step)",
+        help_live:"اتركه فارغاً للوقت الحي",
+        opt_up:"📈 صعود (+)", opt_down:"📉 هبوط (-)",
+        btn_bot:"🤖 بوت جان", bot_title:"🤖 بوت التحليل الرقمي", bot_ph:"السعر... (مثال 4700)", bot_submit:"تجهيز الطلب 🎯",
+        bot_err:"الرجاء إدخال سعر صحيح!",
+        bot_greet:h=>`مرحباً! أجهز طلب الساعة ${h}:00، أدخل السعر الحالي:`,
+        bot_res_title:h=>`📊 <b>تحليل الساعة ${h}:00</b><br>السعر يقع في القناة بين:<br>`,
+        bot_buy_title:`<b>🟢 خطة الشراء (BUY):</b><br>`,
+        bot_sell_title:`<b>🔴 خطة البيع (SELL):</b><br>`,
+        bot_buy_entry:v=>`الدخول: إذا لامس <b>${v}</b> وارتد<br>`,
+        bot_sell_entry:v=>`الدخول: إذا لامس <b>${v}</b> وهبط<br>`,
+        bot_q1:"🎯 TP1 (ربع): ", bot_q2:"🎯 TP2 (نصف): ", bot_q3:"🎯 TP3 (ثلاثة أرباع): ", bot_q4:"🎯 TP4 (سقف): ", bot_q4s:"🎯 TP4 (قاع): ", bot_sl:"🛑 وقف الخسارة: "
+    },
+    en: {
+        btn_menu:"☰ Settings", opt_tal:"🧿 Matrix 24 & Bot",
+        lbl_tal_center:"Center Price", lbl_tal_dir:"Map Direction",
+        lbl_tal_time:"Manual Time (Testing)", lbl_tal_step:"Step Value",
+        help_live:"Leave empty for live time",
+        opt_up:"📈 UP Trend (+)", opt_down:"📉 DOWN Trend (-)",
+        btn_bot:"🤖 Gann Bot", bot_title:"🤖 Gann Signal Bot", bot_ph:"Price... (e.g. 4700)", bot_submit:"Prepare Order 🎯",
+        bot_err:"Please enter a valid price!",
+        bot_greet:h=>`Hello! Preparing order for ${h}:00, enter current price:`,
+        bot_res_title:h=>`📊 <b>Analysis for Hour ${h}:00</b><br>Price falls in the channel between:<br>`,
+        bot_buy_title:`<b>🟢 BUY Plan (Inside Channel):</b><br>`,
+        bot_sell_title:`<b>🔴 SELL Plan (Inside Channel):</b><br>`,
+        bot_buy_entry:v=>`Entry: If it hits <b>${v}</b> and bounces<br>`,
+        bot_sell_entry:v=>`Entry: If it hits <b>${v}</b> and drops<br>`,
+        bot_q1:"🎯 TP1 (25%): ", bot_q2:"🎯 TP2 (50%): ", bot_q3:"🎯 TP3 (75%): ", bot_q4:"🎯 TP4 (Ceiling): ", bot_q4s:"🎯 TP4 (Floor): ", bot_sl:"🛑 Stop Loss: "
+    }
+};
+
+let currentLang = "ku";
+let sc = window.innerWidth < 600 ? 0.2 : 0.3;
+let px = 0, py = 0, dg = false, sx = 0, sy = 0, iDist = 0;
+let isDraggingBot = false, botStartX = 0, botStartY = 0, initialBotX = 0, initialBotY = 0;
+const savedIds = ["sq24BasePrice","sq24TrendDir","sq24ManualTime","sq24StepValue"];
+const $ = id => document.getElementById(id);
+
+function applyLanguage(){
+    try{currentLang = localStorage.getItem("rfx_lang") || "ku"}catch(e){}
+    document.documentElement.dir = currentLang === "en" ? "ltr" : "rtl";
+
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if(lexicon[currentLang] && lexicon[currentLang][key]) el.innerHTML = lexicon[currentLang][key];
+    });
+
+    document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+        const key = el.getAttribute("data-i18n-ph");
+        if(lexicon[currentLang] && lexicon[currentLang][key]) el.placeholder = lexicon[currentLang][key];
+    });
+
+    window.updateBotTime();
+}
+
+function loadSet(){
+    try{
+        savedIds.forEach(id => {
+            const v = localStorage.getItem("rfx_tal_" + id);
+            const el = $(id);
+            if(v !== null && el) el.value = v;
+        });
+    }catch(e){}
+}
+
+function saveSet(){
+    try{
+        savedIds.forEach(id => {
+            const el = $(id);
+            if(el) localStorage.setItem("rfx_tal_" + id, el.value);
+        });
+    }catch(e){}
+}
+
+window.isTimePriceSquared = function(price, base, timeAngle){
+    if(price <= 0) return false;
+    const priceAngle = Math.abs(Math.sqrt(price) - Math.sqrt(base)) * 180;
+    let diff = Math.abs((priceAngle % 360) - timeAngle);
+    if(diff > 180) diff = 360 - diff;
+    return diff <= 3 || Math.abs(diff - 45) <= 3 || Math.abs(diff - 90) <= 3 || Math.abs(diff - 180) <= 3;
+};
+
+window.drawSq24 = function(){
+    const canvas = $("sq24Canvas");
+    if(!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    const CANVAS_SIZE = 5600;
+    canvas.width = canvas.height = CANVAS_SIZE;
+    canvas.style.width = CANVAS_SIZE + "px";
+    canvas.style.height = CANVAS_SIZE + "px";
+
+    const cx = CANVAS_SIZE / 2, cy = CANVAS_SIZE / 2;
+    const base = parseFloat($("sq24BasePrice").value) || 0;
+    const stepVal = parseFloat($("sq24StepValue").value) || 1;
+    const trendDir = $("sq24TrendDir").value;
+    const manualTimeInput = $("sq24ManualTime").value;
+    const size = 24, rGrid = 1900, rClock = 1980;
+    const goldenHours = [10,11,15,16,18];
+
+    let now = new Date();
+    let h = now.getHours();
+    let m = now.getMinutes();
+    let isManual = false;
+
+    if(manualTimeInput){
+        h = parseInt(manualTimeInput.split(":")[0]) || 0;
+        m = parseInt(manualTimeInput.split(":")[1]) || 0;
+        isManual = true;
+    }
+
+    const liveAngleDeg = ((h + m / 60) / 24) * 360;
+    const liveRad = (liveAngleDeg - 90) * Math.PI / 180;
+    const activeColHour = h === 0 ? 24 : h;
+    const themeColor = isManual ? "#ff3399" : "#00ffcc";
+
+    ctx.clearRect(0,0,CANVAS_SIZE,CANVAS_SIZE);
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,rClock,0,2*Math.PI);
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = "rgba(0,255,204,.4)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,rClock - 20,0,2*Math.PI);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(212,175,55,.3)";
+    ctx.stroke();
+
+    for(let a = 0; a < 360; a += 15){
+        const rad = a * Math.PI / 180 - Math.PI / 2;
+        const hourUnit = (a / 15 === 0) ? 24 : a / 15;
+        const isGolden = goldenHours.includes(hourUnit);
+        const isActiveHour = hourUnit === activeColHour;
+        const strokeCol = isActiveHour ? themeColor : (isGolden ? "#d4af37" : "rgba(255,255,255,.7)");
+
+        ctx.lineWidth = isActiveHour ? 12 : (isGolden ? 10 : 5);
+        ctx.strokeStyle = strokeCol;
+        ctx.beginPath();
+        ctx.moveTo(cx + (rClock - 35) * Math.cos(rad), cy + (rClock - 35) * Math.sin(rad));
+        ctx.lineTo(cx + (rClock + 35) * Math.cos(rad), cy + (rClock + 35) * Math.sin(rad));
+        ctx.stroke();
+
+        ctx.fillStyle = isActiveHour ? themeColor : (isGolden ? "#d4af37" : "rgba(255,255,255,.6)");
+        ctx.font = isActiveHour ? "bold 85px monospace" : (isGolden ? "bold 75px monospace" : "bold 55px monospace");
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        if(isActiveHour || isGolden){
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = ctx.fillStyle;
+        }
+
+        ctx.fillText((isGolden && !isActiveHour ? "⭐ " : "") + hourUnit + "H", cx + (rClock + 110) * Math.cos(rad), cy + (rClock + 110) * Math.sin(rad));
+        ctx.shadowBlur = 0;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(cx + (rClock - 40) * Math.cos(liveRad), cy + (rClock - 40) * Math.sin(liveRad));
+    ctx.lineTo(cx + (rClock + 40) * Math.cos(liveRad), cy + (rClock + 40) * Math.sin(liveRad));
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = "#fff";
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = themeColor;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    const cellSize = (rGrid * 1.35) / size;
+    const startX = cx - (size * cellSize) / 2;
+    const startY = cy - (size * cellSize) / 2;
+
+    for(let row = 0; row < size; row++){
+        for(let col = 0; col < size; col++){
+            const colHour = col + 1;
+            let val;
+
+            if(trendDir === "up"){
+                val = parseFloat((base + ((23 - row) * size + col) * stepVal).toFixed(2));
+            }else{
+                val = parseFloat((base - (row * size + col) * stepVal).toFixed(2));
+            }
+
+            const x = startX + col * cellSize;
+            const y = startY + row * cellSize;
+            const isActiveCol = colHour === activeColHour;
+            const isGolden = goldenHours.includes(colHour);
+            let isSquaring = false;
+
+            if(val > 0){
+                const priceAngle = Math.abs(Math.sqrt(val) - Math.sqrt(base)) * 180;
+                let diff = Math.abs((priceAngle % 360) - ((colHour * 15) % 360));
+                if(diff > 180) diff = 360 - diff;
+                isSquaring = isActiveCol && (diff <= 3 || Math.abs(diff - 45) <= 3 || Math.abs(diff - 90) <= 3 || Math.abs(diff - 180) <= 3);
+            }
+
+            const cellW = cellSize - 6;
+            const cellGrad = ctx.createLinearGradient(x,y,x+cellW,y+cellW);
+
+            if(isSquaring){
+                cellGrad.addColorStop(0,themeColor);
+                cellGrad.addColorStop(1,"#006666");
+            }else if(isGolden){
+                cellGrad.addColorStop(0,"#262000");
+                cellGrad.addColorStop(1,"#1a1500");
+            }else{
+                cellGrad.addColorStop(0,"#16161f");
+                cellGrad.addColorStop(1,"#0a0a0f");
+            }
+
+            ctx.fillStyle = cellGrad;
+            ctx.fillRect(x + 3, y + 3, cellW, cellW);
+
+            ctx.strokeStyle = isSquaring ? "#fff" : (isActiveCol ? "rgba(0,255,204,.4)" : (isGolden ? "rgba(212,175,55,.4)" : "rgba(255,255,255,.08)"));
+            ctx.lineWidth = isSquaring ? 2 : 1;
+            ctx.strokeRect(x + 3, y + 3, cellW, cellW);
+
+            ctx.fillStyle = isSquaring ? "#000" : (isActiveCol ? "#fff" : (isGolden ? "#ccc" : "#778"));
+            ctx.font = isSquaring ? `bold ${cellW * .4}px monospace` : `bold ${cellW * .3}px monospace`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(val, x + cellSize / 2, y + cellSize / 2 + (cellW * .1));
+        }
+    }
+
+    const centerText = currentLang === "ku" ? "سەنتەر" : (currentLang === "ar" ? "المركز" : "Center");
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,220,0,2*Math.PI);
+    ctx.fillStyle = "#05050a";
+    ctx.fill();
+    ctx.strokeStyle = themeColor;
+    ctx.lineWidth = 5;
+    ctx.stroke();
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 35px Tahoma";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(centerText,cx,cy - 45);
+
+    ctx.fillStyle = themeColor;
+    ctx.font = "bold 75px monospace";
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = themeColor;
+    ctx.fillText(base,cx,cy + 30);
+    ctx.shadowBlur = 0;
+};
+
+function initBotDrag(){
+    const botBtn = $("rebar-bot-btn");
+    if(!botBtn) return;
+
+    botBtn.addEventListener("mousedown", dragBotStart);
+    document.addEventListener("mousemove", dragBotMove);
+    document.addEventListener("mouseup", dragBotEnd);
+
+    botBtn.addEventListener("touchstart", dragBotStart, {passive:false});
+    document.addEventListener("touchmove", dragBotMove, {passive:false});
+    document.addEventListener("touchend", dragBotEnd);
+}
+
+function dragBotStart(e){
+    if(e.type === "touchstart"){
+        botStartX = e.touches[0].clientX;
+        botStartY = e.touches[0].clientY;
+    }else{
+        botStartX = e.clientX;
+        botStartY = e.clientY;
+    }
+
+    const botBtn = $("rebar-bot-btn");
+    initialBotX = botBtn.offsetLeft;
+    initialBotY = botBtn.offsetTop;
+    isDraggingBot = true;
+}
+
+function dragBotMove(e){
+    if(!isDraggingBot) return;
+
+    let currentX, currentY;
+
+    if(e.type === "touchmove"){
+        currentX = e.touches[0].clientX;
+        currentY = e.touches[0].clientY;
+        e.preventDefault();
+    }else{
+        currentX = e.clientX;
+        currentY = e.clientY;
+    }
+
+    const botBtn = $("rebar-bot-btn");
+    botBtn.style.left = (initialBotX + (currentX - botStartX)) + "px";
+    botBtn.style.top = (initialBotY + (currentY - botStartY)) + "px";
+    botBtn.style.bottom = "auto";
+    botBtn.style.right = "auto";
+}
+
+function dragBotEnd(e){
+    if(!isDraggingBot) return;
+    isDraggingBot = false;
+
+    const finalX = e.type === "touchend" ? e.changedTouches[0].clientX : e.clientX;
+    const finalY = e.type === "touchend" ? e.changedTouches[0].clientY : e.clientY;
+
+    if(Math.abs(finalX - botStartX) < 10 && Math.abs(finalY - botStartY) < 10){
+        window.openBot();
+    }
+}
+
+window.updateBotTime = function(){
+    let h = new Date().getHours();
+    const manual = $("sq24ManualTime").value;
+
+    if(manual) h = parseInt(manual.split(":")[0]) || 0;
+
+    const t = lexicon[currentLang] || lexicon.ku;
+    $("bot-greeting").innerHTML = t.bot_greet(h === 0 ? 24 : h);
+};
+
+window.openBot = function(){
+    window.updateBotTime();
+    $("bot-modal").style.display = "block";
+    $("bot-results").style.display = "none";
+    $("botPriceInput").value = "";
+};
+
+window.closeBot = function(){
+    $("bot-modal").style.display = "none";
+};
+
+window.generateMatrixSignal = function(){
+    const p = parseFloat($("botPriceInput").value);
+    const t = lexicon[currentLang] || lexicon.ku;
+
+    if(!p || p <= 0){
+        alert(t.bot_err);
+        return;
+    }
+
+    const base = parseFloat($("sq24BasePrice").value) || 0;
+    const stepVal = parseFloat($("sq24StepValue").value) || 1;
+    const trendDir = $("sq24TrendDir").value;
+
+    let h = new Date().getHours();
+    const manual = $("sq24ManualTime").value;
+    if(manual) h = parseInt(manual.split(":")[0]) || 0;
+
+    const targetHour = h === 0 ? 24 : h;
+    const col = targetHour - 1;
+
+    let nFloat;
+
+    if(trendDir === "up"){
+        nFloat = (p - base - col * stepVal) / (24 * stepVal);
+    }else{
+        nFloat = (base - p - col * stepVal) / (24 * stepVal);
+    }
+
+    let n1 = Math.floor(nFloat);
+    let n2 = Math.ceil(nFloat);
+    if(n1 === n2) n2 = n1 + 1;
+
+    let val1, val2;
+
+    if(trendDir === "up"){
+        val1 = base + (n1 * 24 + col) * stepVal;
+        val2 = base + (n2 * 24 + col) * stepVal;
+    }else{
+        val1 = base - (n1 * 24 + col) * stepVal;
+        val2 = base - (n2 * 24 + col) * stepVal;
+    }
+
+    const gridBelow = parseFloat(Math.min(val1,val2).toFixed(2));
+    const gridAbove = parseFloat(Math.max(val1,val2).toFixed(2));
+    const dist = gridAbove - gridBelow;
+
+    const b1 = parseFloat((gridBelow + dist * .25).toFixed(2));
+    const b2 = parseFloat((gridBelow + dist * .50).toFixed(2));
+    const b3 = parseFloat((gridBelow + dist * .75).toFixed(2));
+    const b4 = gridAbove;
+
+    const s1 = parseFloat((gridAbove - dist * .25).toFixed(2));
+    const s2 = parseFloat((gridAbove - dist * .50).toFixed(2));
+    const s3 = parseFloat((gridAbove - dist * .75).toFixed(2));
+    const s4 = gridBelow;
+
+    const slOffset = parseFloat((stepVal * 1.5).toFixed(2));
+    const buySL = parseFloat((gridBelow - slOffset).toFixed(2));
+    const sellSL = parseFloat((gridAbove + slOffset).toFixed(2));
+
+    $("bot-status").innerHTML = `
+        ${t.bot_res_title(targetHour)}
+        <span style="color:var(--neon-gold);font-size:18px;display:inline-block;margin-top:5px;">[ ${gridBelow} ] — [ ${gridAbove} ]</span>
+    `;
+
+    $("buyBox").innerHTML = `
+        ${t.bot_buy_title}
+        ${t.bot_buy_entry(gridBelow)}
+        ${t.bot_q1} <span class="target-val">${b1}</span><br>
+        ${t.bot_q2} <span class="target-val">${b2}</span><br>
+        ${t.bot_q3} <span class="target-val">${b3}</span><br>
+        ${t.bot_q4} <span class="target-val">${b4}</span><br>
+        ${t.bot_sl} <span style="color:#ff3333;font-weight:bold;font-family:monospace;">${buySL}</span>
+    `;
+
+    $("sellBox").innerHTML = `
+        ${t.bot_sell_title}
+        ${t.bot_sell_entry(gridAbove)}
+        ${t.bot_q1} <span class="target-val">${s1}</span><br>
+        ${t.bot_q2} <span class="target-val">${s2}</span><br>
+        ${t.bot_q3} <span class="target-val">${s3}</span><br>
+        ${t.bot_q4s} <span class="target-val">${s4}</span><br>
+        ${t.bot_sl} <span style="color:#ff3333;font-weight:bold;font-family:monospace;">${sellSL}</span>
+    `;
+
+    $("bot-results").style.display = "block";
+};
+
+function upT(){
+    $("zoom-layer").style.transform = `translate(${px}px, ${py}px) scale(${sc})`;
+}
+
+function getEP(e){
+    return e.touches && e.touches.length > 0
+        ? {x:e.touches[0].clientX, y:e.touches[0].clientY}
+        : {x:e.clientX, y:e.clientY};
+}
+
+function initMapEvents(){
+    const vM = $("viewport-maps");
+
+    vM.addEventListener("mousedown", e => {
+        if(e.target.closest(".sidebar") || e.target.closest(".header") || e.target.closest("#rebar-bot-btn") || e.target.closest("#bot-modal")) return;
+
+        const p = getEP(e);
+        dg = true;
+        sx = p.x - px;
+        sy = p.y - py;
+        vM.style.cursor = "grabbing";
+    });
+
+    window.addEventListener("mousemove", e => {
+        if(!dg) return;
+
+        const p = getEP(e);
+        px = p.x - sx;
+        py = p.y - sy;
+        upT();
+    });
+
+    window.addEventListener("mouseup", () => {
+        dg = false;
+        vM.style.cursor = "grab";
+    });
+
+    vM.addEventListener("wheel", e => {
+        if(e.target.closest(".sidebar") || e.target.closest(".header") || e.target.closest("#bot-modal")) return;
+
+        e.preventDefault();
+        sc += e.deltaY * -0.001;
+        sc = Math.min(Math.max(0.05, sc), 5);
+        upT();
+    }, {passive:false});
+
+    vM.addEventListener("touchstart", e => {
+        if(e.target.closest(".sidebar") || e.target.closest(".header") || e.target.closest("#rebar-bot-btn") || e.target.closest("#bot-modal")) return;
+
+        if(e.touches.length === 2){
+            dg = false;
+            iDist = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+        }else{
+            const p = getEP(e);
+            dg = true;
+            sx = p.x - px;
+            sy = p.y - py;
+        }
+    }, {passive:false});
+
+    vM.addEventListener("touchmove", e => {
+        if(e.target.closest(".sidebar") || e.target.closest(".header") || e.target.closest("#rebar-bot-btn") || e.target.closest("#bot-modal")) return;
+
+        if(e.touches.length === 2){
+            e.preventDefault();
+
+            const d = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+
+            sc = Math.min(Math.max(0.05, sc * (d / iDist)), 5);
+            iDist = d;
+            upT();
+        }else if(dg){
+            e.preventDefault();
+
+            const p = getEP(e);
+            px = p.x - sx;
+            py = p.y - sy;
+            upT();
+        }
+    }, {passive:false});
+
+    window.addEventListener("touchend", () => {
+        dg = false;
+    });
+}
+
+function initControls(){
+    $("btn-menu").addEventListener("click", e => {
+        e.stopPropagation();
+        $("sidebar").classList.toggle("active");
+    });
+
+    $("btn-close-menu").addEventListener("click", () => {
+        $("sidebar").classList.remove("active");
+    });
+
+    savedIds.forEach(id => {
+        const el = $(id);
+        if(!el) return;
+
+        el.addEventListener("change", () => {
+            saveSet();
+            window.drawSq24();
+            window.updateBotTime();
+        });
+
+        if(el.tagName === "INPUT"){
+            el.addEventListener("input", () => {
+                saveSet();
+                window.drawSq24();
+                window.updateBotTime();
+            });
+        }
+    });
+
+    document.addEventListener("contextmenu", e => e.preventDefault());
+
+    document.addEventListener("keydown", e => {
+        const key = String(e.key || "").toLowerCase();
+
+        if(
+            key === "f12" ||
+            (e.ctrlKey && e.shiftKey && ["i","j","c"].includes(key)) ||
+            (e.ctrlKey && ["u","s"].includes(key))
+        ){
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    }, true);
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const ok = window.RFX_SECURITY_READY ? await window.RFX_SECURITY_READY : true;
+    if(!ok) return;
+
+    applyLanguage();
+    loadSet();
+    initControls();
+    initBotDrag();
+    initMapEvents();
+
+    px = 0;
+    py = 0;
+    upT();
+    window.drawSq24();
+
+    setInterval(() => {
+        window.drawSq24();
+    }, 60000);
+});
+
+})();
+</script>
+</body>
+</html>
